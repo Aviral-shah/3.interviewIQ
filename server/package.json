@@ -1,0 +1,30 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "db": "node view-db.js"
+  },
+  "dependencies": {
+    "axios": "^1.18.1",
+    "better-sqlite3": "^13.0.2",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "crypto": "^1.0.1",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "mongodb": "^7.5.0",
+    "mongoose": "^9.8.0",
+    "multer": "^2.2.0",
+    "nodemon": "^3.1.14",
+    "pdfjs-dist": "^6.2.108",
+    "razorpay": "^2.9.8",
+    "start": "^5.1.0"
+  }
+}
