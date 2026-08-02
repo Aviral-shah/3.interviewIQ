@@ -11,10 +11,7 @@ import paymentRouter from "./routes/payment.route.js"
 
 const app = express()
 const allowedOrigins = [
-  "http://localhost:5173",
-  "http://localhost:5174",
-  "http://localhost:5175",
-  "http://localhost:5176",
+  "https://three-interviewiq-client-7msk.onrender.com"
 ];
 
 app.use(cors({
