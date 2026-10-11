@@ -16,8 +16,18 @@ function Step2Interview({ interviewData, onFinish }) {
   const [isIntroPhase, setIsIntroPhase] = useState(true);
 
   const [isMicOn, setIsMicOn] = useState(true);
+  const isMicOnRef = useRef(true);
   const recognitionRef = useRef(null);
   const [isAIPlaying, setIsAIPlaying] = useState(false);
+  const isAIPlayingRef = useRef(false);
+
+  useEffect(() => {
+    isMicOnRef.current = isMicOn;
+  }, [isMicOn]);
+
+  useEffect(() => {
+    isAIPlayingRef.current = isAIPlaying;
+  }, [isAIPlaying]);
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answer, setAnswer] = useState("");
@@ -108,7 +118,11 @@ function Step2Interview({ interviewData, onFinish }) {
 
       utterance.onstart = () => {
         setIsAIPlaying(true);
-        stopMic()
+        if (recognitionRef.current) {
+          try {
+            recognitionRef.current.stop();
+          } catch {}
+        }
         videoRef.current?.play();
       };
 
@@ -118,9 +132,7 @@ function Step2Interview({ interviewData, onFinish }) {
         videoRef.current.currentTime = 0;
         setIsAIPlaying(false);
 
-
-
-        if (isMicOn) {
+        if (isMicOnRef.current) {
           startMic();
         }
         setTimeout(() => {
@@ -217,13 +229,33 @@ function Step2Interview({ interviewData, onFinish }) {
       setAnswer((prev) => prev + " " + transcript);
     };
 
+    recognition.onend = () => {
+      // Auto-restart recognition if mic is enabled and AI isn't speaking
+      if (isMicOnRef.current && !isAIPlayingRef.current) {
+        try {
+          recognition.start();
+        } catch {}
+      }
+    };
+
+    recognition.onerror = (event) => {
+      // Ignore routine abort/no-speech errors without breaking loop
+      if (event.error === "no-speech" && isMicOnRef.current && !isAIPlayingRef.current) {
+        try {
+          recognition.start();
+        } catch {}
+      }
+    };
+
     recognitionRef.current = recognition;
 
   }, []);
 
 
   const startMic = () => {
-    if (recognitionRef.current && !isAIPlaying) {
+    isMicOnRef.current = true;
+    setIsMicOn(true);
+    if (recognitionRef.current && !isAIPlayingRef.current) {
       try {
         recognitionRef.current.start();
       } catch { }
@@ -231,17 +263,21 @@ function Step2Interview({ interviewData, onFinish }) {
   };
 
   const stopMic = () => {
+    isMicOnRef.current = false;
+    setIsMicOn(false);
     if (recognitionRef.current) {
-      recognitionRef.current.stop();
+      try {
+        recognitionRef.current.stop();
+      } catch {}
     }
   };
+
   const toggleMic = () => {
     if (isMicOn) {
       stopMic();
     } else {
       startMic();
     }
-    setIsMicOn(!isMicOn);
   };
 
 

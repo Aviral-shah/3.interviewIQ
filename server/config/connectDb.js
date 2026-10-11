@@ -6,15 +6,10 @@ dns.setServers(["8.8.8.8", "8.8.4.4"]);
 
 const connectDb = async () => {
     try {
-        await mongoose.connect(process.env.MONGODB_URL, { serverSelectionTimeoutMS: 3000 });
-        console.log("DataBase Connected (MongoDB Atlas)");
+        await mongoose.connect(process.env.MONGODB_URL);
+        console.log("DataBase Connected (MongoDB)");
     } catch (error) {
-        try {
-            await mongoose.connect("mongodb://127.0.0.1:27017/interviewIQ");
-            console.log("DataBase Connected ");
-        } catch (localErr) {
             console.log(`DataBase Error: ${error.message}`);
-        }
     }
 }
 
